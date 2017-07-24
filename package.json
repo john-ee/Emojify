@@ -1,0 +1,27 @@
+{
+  "name": "emojify",
+  "version": "1.0.0",
+  "description": "Discord Bot which uses Micrsoft's cognitives services to recognize emotion on faces",
+  "engines": {
+    "node": "8.2.1"
+  },
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot"
+  },
+  "keywords": [
+    "emotion",
+    "emoji",
+    "bot",
+    "discord"
+  ],
+  "author": "John-Nathan Hill",
+  "license": "ISC",
+  "dependencies": {
+    "bufferutil": "^3.0.2",
+    "discord.js": "^9.3.1",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "https": "^1.0.0"
+  }
+}
