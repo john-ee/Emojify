@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Discord Bot which uses Micrsoft's cognitives services to recognize emotion on faces",
   "engines": {
-    "node": "8.2.1"
+    "node": "6.11.1"
   },
   "main": "bot.js",
   "scripts": {

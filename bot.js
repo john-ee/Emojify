@@ -1,7 +1,7 @@
 const https = require('https');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = "!";
+const prefix = "?";
 
 var options = {
   hostname: 'westus.api.cognitive.microsoft.com',
