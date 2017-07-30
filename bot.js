@@ -6,7 +6,8 @@ const prefix = "?";
 const help = "You may try these commands :\n"
   +prefix+"ping : test out if I am connected\n"
   +prefix+"emotion <url | image> : Give me a pic and I'll give the strongest emotion expressed on the identified faces\n"
-  +prefix+"emoji <url | image> : Same as above but I'll express an emoji";
+  +prefix+"emoji <url | image> : Same as above but I'll express an emoji\n"
+  +prefix+"express <anger|contempt|disgust|fear|happiness|neutral|sadness|surprised"
 
 var getStrongestEmotion = require('./emotion').getStrongestEmotion;
 var getEmoji = require('./emotion').getEmoji;
@@ -45,15 +46,15 @@ function responseHandler(res, message, callback) {
     if (res.statusCode == 200) {
       var jsonChunk = JSON.parse(chunk);
       console.log(jsonChunk);
-      if (!jsonChunk.length) return message.reply("No face recognized");
+      if (!jsonChunk.length) return message.channel.sendMessage("No face recognized");
       var i=1;
       for (face of jsonChunk) {
-        message.reply("The strongest emotion of face "+i+" is "+callback(face.scores));
+        message.channel.sendMessage("The strongest emotion of face "+i+" is "+callback(face.scores));
         i++;
       }
       return;
     }
-    else return message.reply("I received an HTTP code "+ res.statusCode);
+    else return message.channel.sendMessage("I received an HTTP code "+ res.statusCode);
   });
 }
 
@@ -77,11 +78,11 @@ client.on('message', message => {
   }*/
 
   if (command === 'help') {
-    message.reply(help);
+    message.author.sendMessage(help);
   }
 
   if (command === 'ping') {
-    message.reply('pong');
+    message.channel.sendMessage('Pong!');
   }
 
   if (command === 'emotion') {
@@ -90,6 +91,11 @@ client.on('message', message => {
 
   if (command === 'emoji') {
     emojiHandler(args, message, getEmoji);
+  }
+
+  if (command === 'express') {
+    if (args.join(" ") !== "") message.reply(getEmoji(args.join(" ")));
+    else message.reply("Please include a keyword");
   }
 });
 

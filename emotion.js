@@ -14,8 +14,10 @@ function getStrongestEmotion(scores) {
 
 exports.getStrongestEmotion = getStrongestEmotion;
 
-function getEmoji(scores) {
-  switch (getStrongestEmotion(scores)) {
+function getEmoji(emotion) {
+  if (typeof(emotion) === "string") var string = emotion;
+  else string = getStrongestEmotion(emotion);
+  switch (string) {
     case "anger":
       return ":rage:";
     case "contempt":
