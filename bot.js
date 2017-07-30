@@ -1,12 +1,12 @@
 const https = require('https');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = "/";
+const prefix = "?";
 
 const help = "You may try these commands :\n"
   +prefix+"ping : test out if I am connected\n"
-  +prefix+"emotion <url> : Give me a pic and I'll give the strongest emotion expressed on the identified faces\n"
-  +prefix+"emoji <url> : Same as above but I'll express an emoji";
+  +prefix+"emotion <url | image> : Give me a pic and I'll give the strongest emotion expressed on the identified faces\n"
+  +prefix+"emoji <url | image> : Same as above but I'll express an emoji";
 
 var getStrongestEmotion = require('./emotion').getStrongestEmotion;
 var getEmoji = require('./emotion').getEmoji;
@@ -22,9 +22,12 @@ var options = {
   }
 };
 
-function commandHandler(args, message, callback) {
-  var url = args.join(" ");
-  var data = {};
+function emojiHandler(args, message, callback) {
+  var url = null, data = {};
+  // = args.join(" ");
+  if (message.attachments.array().length) url = message.attachments.array()[0].url;
+  else if (args.join(" ")!=="") url = args.join(" ");
+  else return message.reply("Please include an URL or an image");
   data["url"] = url;
   var req = https.request(options, (res) => responseHandler(res,message,callback));
   req.write(JSON.stringify(data));
@@ -42,6 +45,7 @@ function responseHandler(res, message, callback) {
     if (res.statusCode == 200) {
       var jsonChunk = JSON.parse(chunk);
       console.log(jsonChunk);
+      if (!jsonChunk.length) return message.reply("No face recognized");
       var i=1;
       for (face of jsonChunk) {
         message.reply("The strongest emotion of face "+i+" is "+callback(face.scores));
@@ -49,7 +53,7 @@ function responseHandler(res, message, callback) {
       }
       return;
     }
-    else return ;message.reply("I received an HTTP code "+ res.statusCode);
+    else return message.reply("I received an HTTP code "+ res.statusCode);
   });
 }
 
@@ -64,6 +68,14 @@ client.on('message', message => {
   const args = message.content.split(/\s+/g);
   const command = args.shift().slice(prefix.length).toLowerCase();
 
+  /*if (command === 'new-prefix') {
+    if (args.join(" ") !== "") {
+      prefix = args.join(" ");
+      message.reply("New command prefix is "+ prefix);
+    }
+    else message.reply("Please include a new prefix if you wish to change it");
+  }*/
+
   if (command === 'help') {
     message.reply(help);
   }
@@ -73,11 +85,11 @@ client.on('message', message => {
   }
 
   if (command === 'emotion') {
-    commandHandler(args, message, getStrongestEmotion);
+    emojiHandler(args, message, getStrongestEmotion);
   }
 
   if (command === 'emoji') {
-    commandHandler(args, message, getEmoji);
+    emojiHandler(args, message, getEmoji);
   }
 });
 
